@@ -1,16 +1,27 @@
 import axios from "axios";
 
+const secret = process.env.CRON_SECRET;
+
 const syncURL = "https://httpbin.org/get?endpoint=sync";
 const refreshURL = "https://httpbin.org/get?endpoint=refresh";
 
 async function run() {
   try {
     console.log("Running scheduled sync...");
+    console.log("Secret:", secret);
 
-    const syncRes = await axios.get(syncURL);
+    await axios.get(syncURL, {
+      headers: {
+        "X-Cron-Secret": secret,
+      },
+    });
     console.log("Sync response:", syncRes.status);
 
-    const refreshRes = await axios.get(refreshURL);
+    await axios.get(refreshURL, {
+      headers: {
+        "X-Cron-Secret": secret,
+      },
+    });
     console.log("Refresh response:", refreshRes.status);
 
     console.log("Completed.");
